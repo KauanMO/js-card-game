@@ -97,7 +97,7 @@ main {
     transition: 300ms ease;
 }
 
-.card:hover {
+.inHandCard:hover {
     transform: translateY(-8rem);
 }
 

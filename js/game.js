@@ -34,7 +34,7 @@ function createCard() {
     const defense = document.createElement('span')
     const attributes = document.createElement('div')
 
-    card.classList.add('card')
+    card.classList.add('inHandCard')
     pic.classList.add('cardPic')
     name.classList.add('cardName')
     effect.classList.add('cardEffect')
@@ -60,7 +60,19 @@ function createCard() {
     attributes.appendChild(defense)
 
     card.addEventListener('click', (card) => {
-        playCard(card.target)
+        if (card.target.classList.contains('card')) {
+            playCard(card.target)
+        } else if (card.target.classList.contains('cardStrength') || card.target.classList.contains('cardDefense')) {
+            playCard(card.target.parentNode.parentNode)
+
+        } else if (card.target.classList.contains('card-icon')) {
+            playCard(card.target.parentNode.parentNode.parentNode)
+        }
+        else {
+            playCard(card.target.parentNode)
+        }
+
+        console.log(card.target)
     })
 
     buyCard(card)
@@ -71,7 +83,7 @@ function buyCard(card) {
 
     if (hand.length >= 3) {
         hand.forEach((card, i) => {
-            card.classList = ['card']
+            card.classList = ['inHandCard card']
             card.classList.add(`hand-${hand.length}-card-${i + 1}`)
         })
     }
@@ -80,19 +92,27 @@ function buyCard(card) {
 }
 
 function playCard(card) {
+    let hand = document.querySelector('.hand')
     card.style.transform = 'translateY(-16rem)'
-    document.querySelector('.hand').style.transform = 'translateY(10rem)'
+    hand.style.transform = 'translateY(10rem)'
     let slots = document.querySelectorAll('.slot.player-slot')
 
-    const placeCard = () => {
-        
-        slots.forEach(naslot => {
-            naslot.removeEventListener('click', placeCard)
+    function placeCard(target) {
+        target.appendChild(card)
+        card.classList = ['card']
+        card.style.transform = ''
+
+        slots.forEach(slot => {
+            slot.replaceWith(slot.cloneNode(true))
         })
+
+        hand.style.transform = 'translateY(0)'
     }
 
     slots.forEach(slot => {
-        slot.addEventListener('click', placeCard)
+        slot.addEventListener('click', (e) => {
+            placeCard(e.target)
+        })
     })
 }
 
