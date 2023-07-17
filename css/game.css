@@ -1,0 +1,114 @@
+:root {
+    --main: #28231C;
+}
+
+* {
+    -webkit-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+main {
+    position: relative;
+    height: 100vh;
+    background-color: var(--main);
+    display: flex;
+    justify-content: center;
+    overflow: hidden;
+}
+
+.board {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-evenly;
+    width: 100rem;
+    height: 56.25rem;
+    flex-shrink: 0;
+    border-radius: 1.25rem;
+    background: rgba(239, 200, 139, 0.20);
+    margin-top: 3rem;
+}
+
+.card-field {
+    width: 84.375rem;
+    height: 16.875rem;
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    justify-items: center;
+}
+
+.slot {
+    width: 11.18856rem;
+    height: 16.875rem;
+    flex-shrink: 0;
+    border-radius: 0.625rem;
+    border: 1px solid #FFF;
+}
+
+.turn .coin {
+    width: 85px;
+    height: 85px;
+    border-radius: 50%;
+    background: url('../assets/img/water-gif.gif');
+}
+
+.hand {
+    position: absolute;
+    width: 52.04119rem;
+    height: 11.66294rem;
+    bottom: 0;
+    display: flex;
+    gap: .2rem;
+    justify-content: center;
+}
+
+.card {
+    display: flex;
+    flex-direction: column;
+    width: 11.18856rem;
+    height: 16.875rem;
+    border-radius: 0.625rem;
+    border: 2px solid #000;
+    background: #655356;
+    transition: 300ms ease;
+}
+
+.card:hover {
+    transform: translateY(-8rem);
+}
+
+.card-pic {
+    width: 8.125rem;
+    height: 6.5625rem;
+    border-radius: 0.3125rem;
+    border: 1px solid #000;
+    align-self: center;
+    margin-top: 1rem;
+}
+
+.hand-3-card-1,
+.hand-4-card-1,
+.hand-5-card-2 {
+    transform: rotate(-5deg) translateY(.5rem);
+}
+
+.hand-3-card-3,
+.hand-4-card-4,
+.hand-5-card-4 {
+    transform: rotate(5deg) translateY(.5rem);
+}
+
+.hand-5-card-1 {
+    transform: rotate(-10deg) translateY(1.5rem);
+}
+
+.hand-5-card-5 {
+    transform: rotate(10deg) translateY(1.5rem);
+}
+
+.cardName {
+    font-size: 1.2rem;
+    text-align: center;
+    margin-top: .3rem;
+}
