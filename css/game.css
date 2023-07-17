@@ -1,5 +1,7 @@
 :root {
     --main: #28231C;
+    --card-color: #655356;
+    --light-blue: #A9BCD0;
 }
 
 * {
@@ -17,7 +19,21 @@ main {
     overflow: hidden;
 }
 
+.mana-indicator {
+    position: absolute;
+    font-size: 2.6rem;
+    background: var(--light-blue);
+    border-radius: 50%;
+    width: 3rem;
+    height: 3rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    right: 1.8rem;
+}
+
 .board {
+    position: relative;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -44,6 +60,11 @@ main {
     flex-shrink: 0;
     border-radius: 0.625rem;
     border: 1px solid #FFF;
+    transition: 100ms ease;
+}
+
+.player-field .slot:hover {
+    border: 3px solid #FFF;
 }
 
 .turn .coin {
@@ -61,16 +82,18 @@ main {
     display: flex;
     gap: .2rem;
     justify-content: center;
+    transition: 200ms ease;
 }
 
 .card {
+    position: relative;
     display: flex;
     flex-direction: column;
     width: 11.18856rem;
     height: 16.875rem;
     border-radius: 0.625rem;
     border: 2px solid #000;
-    background: #655356;
+    background: var(--card-color);
     transition: 300ms ease;
 }
 
@@ -78,13 +101,46 @@ main {
     transform: translateY(-8rem);
 }
 
-.card-pic {
+.cardPic {
     width: 8.125rem;
     height: 6.5625rem;
     border-radius: 0.3125rem;
     border: 1px solid #000;
     align-self: center;
     margin-top: 1rem;
+}
+
+.cardCost {
+    position: absolute;
+    right: -15px;
+    top: -15px;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background-color: var(--light-blue);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.cardAttributes {
+    display: flex;
+    position: absolute;
+    width: 100%;
+    justify-content: space-around;
+    bottom: 10px;
+}
+
+.cardStrength, .cardDefense {
+    display: flex;
+    font-size: 1.3rem;
+}
+
+.card-icon {
+    width: 20px;
+    height: 20px;
+    background-position: center;
+    background-size: cover;
 }
 
 .hand-3-card-1,

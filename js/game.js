@@ -10,14 +10,17 @@ let cards = [
     }
 ]
 
-let deck, hand = []
+let deck, hand = [], mana
 
 gameStart()
 
 function gameStart() {
+    mana = 2
+
     for (let i = 0; i < 5; i++) {
         createCard()
     }
+    playerTurn()
 }
 
 function createCard() {
@@ -25,17 +28,40 @@ function createCard() {
     const card = document.createElement('div')
     const pic = document.createElement('div')
     const name = document.createElement('span')
-    
-    name.classList.add('cardName')
-    name.innerText = cardInfo.name
+    const effect = document.createElement('span')
+    const cost = document.createElement('div')
+    const strength = document.createElement('span')
+    const defense = document.createElement('span')
+    const attributes = document.createElement('div')
 
-    pic.classList.add('card-pic')
+    card.classList.add('card')
+    pic.classList.add('cardPic')
+    name.classList.add('cardName')
+    effect.classList.add('cardEffect')
+    cost.classList.add('cardCost')
+    attributes.classList.add('cardAttributes')
+    strength.classList.add('cardStrength')
+    defense.classList.add('cardDefense')
+
+    name.innerText = cardInfo.name
+    effect.innerText = cardInfo.effect
+    cost.innerText = cardInfo.cost
+    strength.innerHTML = `<div style="background-image: url('../assets/img/atk.png')" class='card-icon'></div>${cardInfo.strength}`
+    defense.innerHTML = `<div style="background-image: url('../assets/img/defense.png')" class='card-icon'></div>${cardInfo.defense}`
     pic.style.background = `center url(../assets/img/${cardInfo.pic}) no-repeat`
     pic.style.backgroundSize = 'cover'
 
-    card.classList.add('card')
     card.appendChild(pic)
     card.appendChild(name)
+    card.appendChild(effect)
+    card.appendChild(cost)
+    card.appendChild(attributes)
+    attributes.appendChild(strength)
+    attributes.appendChild(defense)
+
+    card.addEventListener('click', (card) => {
+        playCard(card.target)
+    })
 
     buyCard(card)
 }
@@ -51,4 +77,27 @@ function buyCard(card) {
     }
 
     document.querySelector('.hand').appendChild(card)
+}
+
+function playCard(card) {
+    card.style.transform = 'translateY(-16rem)'
+    document.querySelector('.hand').style.transform = 'translateY(10rem)'
+    let slots = document.querySelectorAll('.slot.player-slot')
+
+    const placeCard = () => {
+        
+        slots.forEach(naslot => {
+            naslot.removeEventListener('click', placeCard)
+        })
+    }
+
+    slots.forEach(slot => {
+        slot.addEventListener('click', placeCard)
+    })
+}
+
+function playerTurn() {
+    document.querySelector('.mana-indicator').innerText = mana
+
+
 }
