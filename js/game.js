@@ -7,24 +7,42 @@ let cards = [
         defense: 1,
         pic: 'boxer.png',
         effect: ''
+    },
+    {
+        id: 2,
+        name: 'Dragon',
+        cost: 3,
+        strength: 3,
+        defense: 3,
+        pic: 'dragon.png',
+        effect: ''
     }
 ]
 
-let deck, hand = [], mana
+let deck, firstTurn = true, turn = 'player', hand = [], mana, manaind = document.querySelector('.mana-indicator')
 
 gameStart()
 
+window.addEventListener('click', () => {
+    manaind.innerText = mana
+})
+
+document.querySelector('.coin').addEventListener('click', () => {
+    switchTurn()
+})
+
 function gameStart() {
     mana = 2
-
-    for (let i = 0; i < 5; i++) {
-        createCard()
-    }
-    playerTurn()
+    setTimeout(() => {
+        for (let i = 0; i < 5; i++) {
+            createCard()
+        }
+        document.querySelector('.hand').style.transform = 'translateY(0)'
+    }, 0);
 }
 
 function createCard() {
-    let cardInfo = cards[parseInt(Math.random() * 1)]
+    let cardInfo = cards[parseInt(Math.random() * 2)]
     const card = document.createElement('div')
     const pic = document.createElement('div')
     const name = document.createElement('span')
@@ -60,19 +78,26 @@ function createCard() {
     attributes.appendChild(defense)
 
     card.addEventListener('click', (card) => {
-        if (card.target.classList.contains('card')) {
-            playCard(card.target)
-        } else if (card.target.classList.contains('cardStrength') || card.target.classList.contains('cardDefense')) {
-            playCard(card.target.parentNode.parentNode)
+        if (cardInfo.cost > mana) {
+            manaind.style.background = '#931621'
+            manaind.style.animation = 'shake 0.5s'
+            setTimeout(() => {
+                manaind.style.background = 'var(--light-blue)'
+                manaind.style.animation = 'none'
+            }, 1200);
+        } else {
+            if (card.target.classList.contains('card')) {
+                playCard(card.target, cardInfo.cost)
+            } else if (card.target.classList.contains('cardStrength') || card.target.classList.contains('cardDefense')) {
+                playCard(card.target.parentNode.parentNode, cardInfo.cost)
 
-        } else if (card.target.classList.contains('card-icon')) {
-            playCard(card.target.parentNode.parentNode.parentNode)
+            } else if (card.target.classList.contains('card-icon')) {
+                playCard(card.target.parentNode.parentNode.parentNode, cardInfo.cost)
+            }
+            else {
+                playCard(card.target.parentNode, cardInfo.cost)
+            }
         }
-        else {
-            playCard(card.target.parentNode)
-        }
-
-        console.log(card.target)
     })
 
     buyCard(card)
@@ -91,7 +116,7 @@ function buyCard(card) {
     document.querySelector('.hand').appendChild(card)
 }
 
-function playCard(card) {
+function playCard(card, cost) {
     let hand = document.querySelector('.hand')
     card.style.transform = 'translateY(-16rem)'
     hand.style.transform = 'translateY(10rem)'
@@ -105,8 +130,8 @@ function playCard(card) {
         slots.forEach(slot => {
             slot.replaceWith(slot.cloneNode(true))
         })
-
         hand.style.transform = 'translateY(0)'
+        mana -= cost
     }
 
     slots.forEach(slot => {
@@ -116,8 +141,24 @@ function playCard(card) {
     })
 }
 
-function playerTurn() {
-    document.querySelector('.mana-indicator').innerText = mana
+function switchTurn() {
+    manaind.innerText = mana
+    let coin = document.querySelector('.coin')
+    if (turn == 'opponent') {
+        turn = 'player'
+        coin.style.background = "url('../assets/img/water-gif.gif')"
+    } else {
+        turn = 'opponent'
+        coin.style.background = 'black'
+        coin.style.cursor = 'unset'
+    }
+    if(!firstTurn){
+        attack()
+    }else{
+        firstTurn = false
+    }
+}
 
-
+function attack(){
+    
 }
