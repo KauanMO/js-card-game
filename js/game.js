@@ -19,34 +19,48 @@ let cards = [
     }
 ]
 
-let tutorialFase = 0, deck, opponentLife = 100, playerLife = 100, firstTurn = true, turn = 'player', hand = [], mana, manaind = document.querySelector('.mana-indicator')
+let tutorialFase = 0, cemetery = [], deck, opponentLife = 100, playerLife = 100, firstTurn = true, turn = 'player', hand = [], mana, manaind = document.querySelector('.mana-indicator')
+
+document.querySelector('#pularTuto').addEventListener('click', () => {
+    tutorialElement = document.querySelector('.tutorial')
+
+    tutorialElement.style.opacity = 0
+    setTimeout(() => {
+        tutorialElement.style.display = 'none'
+        document.querySelector('.cardExample').style.display = 'none'
+        document.querySelector('main').classList.add('no-after')
+        setTimeout(() => {
+            gameStart()
+        }, 100);
+    }, 300);
+})
 
 function tutorial() {
     text = document.querySelector('.tutoText')
     tutorialElement = document.querySelector('.tutorial')
     spinner = document.querySelector('.spinner')
-
     text.style.opacity = 0
     spinner.style.opacity = 0
+    tutorialFase++
 
     setTimeout(() => {
         switch (tutorialFase) {
             case 1:
                 text.innerText = 'Jogue em tela cheia (F11)'
-                break;
+                break
             case 2:
                 text.innerText = 'Este é o indicador de vida inimigo'
                 spinner.style.opacity = 1
                 spinner.style.top = '5.5%'
                 spinner.style.left = '10.2%'
-                break;
+                break
             case 3:
                 text.innerText = 'Este é o seu indicador de vida'
                 spinner.style.opacity = 1
                 spinner.style.top = 'unset'
                 spinner.style.bottom = '12.2%'
                 spinner.style.left = '10.2%'
-                break;
+                break
             case 4:
                 text.innerText = `Clique na moeda para terminar o seu turno.
                 Ao clica-la, ela ficara totalmente preta,
@@ -55,7 +69,7 @@ function tutorial() {
                 spinner.style.bottom = '49.15%'
                 spinner.style.left = '47.9%'
                 switchTurn()
-                break;
+                break
             case 5:
                 switchTurn()
                 firstTurn = true
@@ -67,28 +81,49 @@ function tutorial() {
                 document.querySelector('.exampleCardEffect').innerText = 'Aumenta seu ataque a cada 2 rodadas em jogo'
                 break
             case 7:
-                document.querySelector('.cardExample').style.opacity = 0
-                text.innerText = `A cada fim de turno, as cartas lutam, 
-                subtraindo a força das aliadas da defesa das adversárias adjacentes`
+                text.innerText = `Cada carta possui um custo de mana`
+                spinner.style.opacity = 1
+                spinner.style.top = '26.4%'
+                spinner.style.left = '52.6%'
+                spinner.style.bottom = 'unset'
                 break
             case 8:
-                text.innerText = `Quanda não há uma carta na frente de outra, ela bate diretamente contra o adversário`
+                spinner.style.opacity = 1
+                spinner.style.top = '42.4%'
+                spinner.style.left = 'unset'
+                spinner.style.right = '8.5%'
+                text.innerText = `Aqui é o valor de sua mana. 
+                Vocë ganha 1 de mana por turno, podendo ser afetado por efeitos de cartas`
                 break
             case 9:
-                text.innerText = `Ganha o adversário que levar a vida do outro a 0 primeiro`
-                break;
+                document.querySelector('.cardExample').style.opacity = 0
+                text.innerText = `A cada fim de turno, as cartas lutam, 
+                    subtraindo a força das aliadas da defesa das adversárias adjacentes`
+                break
             case 10:
-                text.innerText = `Boa sorte.`
+                text.innerText = `Quanda não há uma carta na frente de outra, ela bate diretamente contra o adversário`
+                break
             case 11:
+                text.innerText = `Ganha o adversário que levar a vida do outro a 0 primeiro`
+                break
+            case 12:
+                text.innerText = `Boa sorte.`
+                break
+            case 13:
                 tutorialElement.style.opacity = 0
-                gameStart()
+                setTimeout(() => {
+                    tutorialElement.style.display = 'none'
+                    document.querySelector('.cardExample').style.display = 'none'
+                    document.querySelector('main').classList.add('no-after')
+                    setTimeout(() => {
+                        gameStart()
+                    }, 100);
+                }, 300);
                 break
 
         }
         text.style.opacity = 1
     }, 400);
-
-    tutorialFase++
 }
 
 document.querySelector('#tutoOk').addEventListener('click', () => {
@@ -97,20 +132,21 @@ document.querySelector('#tutoOk').addEventListener('click', () => {
 
 function gameStart() {
     mana = 2
-    setTimeout(() => {
-        for (let i = 0; i < 5; i++) {
-            createCard()
-        }
-        document.querySelector('.hand').style.transform = 'translateY(0)'
-    }, 0);
+    manaind.innerText = mana
+    let hand = document.querySelector('.hand')
 
     window.addEventListener('click', () => {
         manaind.innerText = mana
     })
 
-    document.querySelector('.coin').addEventListener('click', () => {
-        switchTurn()
-    })
+    document.querySelector('.coin').addEventListener('click', switchTurn)
+
+    setTimeout(() => {
+        for (let i = 0; i < 5; i++) {
+            createCard()
+        }
+        hand.style.transform = 'translateY(0)'
+    }, 0);
 }
 
 function createCard() {
@@ -125,6 +161,7 @@ function createCard() {
     const attributes = document.createElement('div')
 
     card.classList.add('inHandCard')
+    card.id = cardInfo.id
     pic.classList.add('cardPic')
     name.classList.add('cardName')
     effect.classList.add('cardEffect')
@@ -150,29 +187,33 @@ function createCard() {
     attributes.appendChild(defense)
 
     card.addEventListener('click', (card) => {
-        if (cardInfo.cost > mana) {
-            manaind.style.background = '#931621'
-            manaind.style.animation = 'shake 0.5s'
-            setTimeout(() => {
-                manaind.style.background = 'var(--light-blue)'
-                manaind.style.animation = 'none'
-            }, 1200);
-        } else {
-            if (card.target.classList.contains('card')) {
-                playCard(card.target, cardInfo.cost)
-            } else if (card.target.classList.contains('cardStrength') || card.target.classList.contains('cardDefense')) {
-                playCard(card.target.parentNode.parentNode, cardInfo.cost)
-
-            } else if (card.target.classList.contains('card-icon')) {
-                playCard(card.target.parentNode.parentNode.parentNode, cardInfo.cost)
-            }
-            else {
-                playCard(card.target.parentNode, cardInfo.cost)
-            }
-        }
+        verifyManaCard(card, cardInfo.cost)
     })
 
     buyCard(card)
+}
+
+function verifyManaCard(card, cost) {
+    if (cost > mana) {
+        manaind.style.background = '#931621'
+        manaind.style.animation = 'shake 0.5s'
+        setTimeout(() => {
+            manaind.style.background = 'var(--light-blue)'
+            manaind.style.animation = 'none'
+        }, 1200);
+    } else {
+        if (card.target.classList.contains('card')) {
+            playCard(card.target, cost)
+        } else if (card.target.classList.contains('cardStrength') || card.target.classList.contains('cardDefense')) {
+            playCard(card.target.parentNode.parentNode, cost)
+
+        } else if (card.target.classList.contains('card-icon')) {
+            playCard(card.target.parentNode.parentNode.parentNode, cost)
+        }
+        else {
+            playCard(card.target.parentNode, cost)
+        }
+    }
 }
 
 function buyCard(card) {
@@ -214,19 +255,28 @@ function playCard(card, cost) {
 }
 
 function switchTurn() {
+    let hand = document.querySelector('.hand')
+    let cards = document.querySelectorAll('.card')
+    let coin = document.querySelector('.coin')
+
     if (mana) {
         manaind.innerText = mana
     }
-    let coin = document.querySelector('.coin')
+
     if (turn == 'opponent') {
+        hand.style.bottom = '0'
         turn = 'player'
+        coin.addEventListener('click', switchTurn)
         coin.style.background = "url('../assets/img/water-gif.gif')"
     } else {
+        hand.style.bottom = '-20rem'
         turn = 'opponent'
+        coin.removeEventListener('click', switchTurn)
         coin.style.background = 'black'
         coin.style.cursor = 'unset'
     }
-    if (!firstTurn) {
+
+    if (firstTurn) {
         attack()
     } else {
         firstTurn = false
@@ -234,5 +284,33 @@ function switchTurn() {
 }
 
 function attack() {
+    let inFieldCards = document.querySelectorAll('.player-slot>.card')
+    inFieldCards.forEach(card => {
+        verifyOpponentCards(card)
+    })
+}
 
+function verifyOpponentCards(card) {
+    let opponnetCard = document.querySelector(`.opponent-slot#${card.parentNode.id}>.card`)
+    if (opponnetCard) {
+        alert('tem inimigo')
+        battle(card, opponnetCard)
+    } else {
+        alert('nao tem inimigo')
+    }
+}
+
+function battle(playerCard, opponentCard) {
+    let opponentDefense = Number(opponentCard.querySelector('.cardDefense').innerText)
+    let playerStrength = Number(playerCard.querySelector('.cardStrength').innerText)
+
+    if(opponentDefense <= playerStrength){
+        killCard(opponentCard)
+    }
+}
+
+function killCard(card){
+    cemetery.push(card)
+
+    card.parentNode.innerHTML = ''
 }
