@@ -173,8 +173,8 @@ function createCard() {
     name.innerText = cardInfo.name
     effect.innerText = cardInfo.effect
     cost.innerText = cardInfo.cost
-    strength.innerHTML = `<div style="background-image: url('../assets/img/atk.png')" class='card-icon'></div>${cardInfo.strength}`
-    defense.innerHTML = `<div style="background-image: url('../assets/img/defense.png')" class='card-icon'></div>${cardInfo.defense}`
+    strength.innerHTML = `<div style="background-image: url('../assets/img/atk.png')" class='card-icon'></div> <span id='strengthValue'>${cardInfo.strength}</span>`
+    defense.innerHTML = `<div style="background-image: url('../assets/img/defense.png')" class='card-icon'></div> <span id='defenseValue'>${cardInfo.defense}</span>`
     pic.style.background = `center url(../assets/img/${cardInfo.pic}) no-repeat`
     pic.style.backgroundSize = 'cover'
 
@@ -293,24 +293,44 @@ function attack() {
 function verifyOpponentCards(card) {
     let opponnetCard = document.querySelector(`.opponent-slot#${card.parentNode.id}>.card`)
     if (opponnetCard) {
-        alert('tem inimigo')
         battle(card, opponnetCard)
     } else {
-        alert('nao tem inimigo')
     }
 }
 
 function battle(playerCard, opponentCard) {
-    let opponentDefense = Number(opponentCard.querySelector('.cardDefense').innerText)
-    let playerStrength = Number(playerCard.querySelector('.cardStrength').innerText)
+    let opponentDefense = Number(opponentCard.querySelector('#defenseValue').innerText)
+    let playerStrength = Number(playerCard.querySelector('#strengthValue').innerText)
 
-    if(opponentDefense <= playerStrength){
-        killCard(opponentCard)
-    }
+    attackAnimate(playerCard, opponentCard)
+
+    setTimeout(() => {
+        if (opponentDefense <= playerStrength) {
+            killCard(opponentCard)
+        } else {
+            opponentCard.querySelector('#defenseValue').innerText = opponentDefense - playerStrength
+        }
+    }, 550);
 }
 
-function killCard(card){
-    cemetery.push(card)
+function attackAnimate(card, opponentCard) {
+    card.style.animation = 'playerAttack .3s'
+    setTimeout(() => {
+        opponentCard.style.animation = 'opponentDamaged .3s'
+    }, 80);
+    setTimeout(() => {
+        card.style.animation = 'unset'
+    }, 600);
+}
 
-    card.parentNode.innerHTML = ''
+function killAnimate(card) {
+    card.style.animation = '0.3s forwards killCard'
+}
+
+function killCard(card) {
+    cemetery.push(card)
+    killAnimate(card)
+    setTimeout(() => {
+        card.parentNode.innerHTML = ''
+    }, 400);
 }
