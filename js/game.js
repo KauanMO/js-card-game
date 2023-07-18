@@ -19,16 +19,57 @@ let cards = [
     }
 ]
 
-let deck, firstTurn = true, turn = 'player', hand = [], mana, manaind = document.querySelector('.mana-indicator')
+let tutorialFase = 0, deck, opponentLife = 100, playerLife = 100, firstTurn = true, turn = 'player', hand = [], mana, manaind = document.querySelector('.mana-indicator')
 
-gameStart()
+function tutorial() {
+    text = document.querySelector('.tutoText')
+    tutorialElement = document.querySelector('.tutorial')
+    spinner = document.querySelector('.spinner')
 
-window.addEventListener('click', () => {
-    manaind.innerText = mana
-})
+    text.style.opacity = 0
+    spinner.style.opacity = 0
 
-document.querySelector('.coin').addEventListener('click', () => {
-    switchTurn()
+    setTimeout(() => {
+        switch (tutorialFase) {
+            case 1:
+                text.innerText = 'Jogue em tela cheia (F11)'
+                break;
+            case 2:
+                text.innerText = 'Este é o indicador de vida inimigo'
+                spinner.style.opacity = 1
+                spinner.style.top = '5.5%'
+                spinner.style.left = '10.2%'
+                break;
+            case 3:
+                text.innerText = 'Este é o seu indicador de vida'
+                spinner.style.opacity = 1
+                spinner.style.top = 'unset'
+                spinner.style.bottom = '12.2%'
+                spinner.style.left = '10.2%'
+                break;
+            case 4:
+                text.innerText = `Clique na moeda para terminar o seu turno.
+                Ao clica-la, ela ficara totalmente preta,
+                indicando que é o turno do adversário`
+                spinner.style.opacity = 1
+                spinner.style.bottom = '49.15%'
+                spinner.style.left = '47.9%'
+                switchTurn()
+                break;
+            case 5:
+                switchTurn()
+                firstTurn = true
+                text.innerText = `Cada carta possui uma foto, nome, força e ataque`
+                
+        }
+        text.style.opacity = 1
+    }, 400);
+
+    tutorialFase++
+}
+
+document.querySelector('#tutoOk').addEventListener('click', () => {
+    tutorial()
 })
 
 function gameStart() {
@@ -39,6 +80,14 @@ function gameStart() {
         }
         document.querySelector('.hand').style.transform = 'translateY(0)'
     }, 0);
+
+    window.addEventListener('click', () => {
+        manaind.innerText = mana
+    })
+
+    document.querySelector('.coin').addEventListener('click', () => {
+        switchTurn()
+    })
 }
 
 function createCard() {
@@ -142,7 +191,9 @@ function playCard(card, cost) {
 }
 
 function switchTurn() {
-    manaind.innerText = mana
+    if(mana){
+        manaind.innerText = mana
+    }
     let coin = document.querySelector('.coin')
     if (turn == 'opponent') {
         turn = 'player'
@@ -152,13 +203,13 @@ function switchTurn() {
         coin.style.background = 'black'
         coin.style.cursor = 'unset'
     }
-    if(!firstTurn){
+    if (!firstTurn) {
         attack()
-    }else{
+    } else {
         firstTurn = false
     }
 }
 
-function attack(){
-    
+function attack() {
+
 }

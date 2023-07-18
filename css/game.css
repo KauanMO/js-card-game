@@ -10,6 +10,16 @@
     user-select: none;
 }
 
+@keyframes appear {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
 @keyframes shake {
     0% {
         transform: translate(1px, 1px) rotate(0deg);
@@ -56,6 +66,29 @@
     }
 }
 
+@keyframes spinner {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.spinner {
+    opacity: 0;
+    transition: opacity 200ms ease;
+    content: '';
+    box-sizing: border-box;
+    position: absolute;
+    width: 100px;
+    height: 100px;
+    z-index: 4;
+    margin-top: -10px;
+    margin-left: -10px;
+    border-radius: 50%;
+    border-top: 2px solid black;
+    border-right: 2px solid transparent;
+    animation: spinner 1.2s linear infinite;
+}
+
 main {
     position: relative;
     height: 100vh;
@@ -63,6 +96,55 @@ main {
     display: flex;
     justify-content: center;
     overflow: hidden;
+}
+
+.opponentLife {
+    position: absolute;
+    font-size: 2.3rem;
+    top: 2rem;
+    left: 3rem;
+    color: white;
+}
+
+.playerLife{
+    position: absolute;
+    font-size: 2.3rem;
+    bottom: 2rem;
+    left: 3rem;
+    color: white;
+}
+
+.tutorial {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: absolute;
+    top: 1rem;
+    z-index: 2;
+    background: #444140;
+    height: 20vh;
+    width: 30vw;
+    border-radius: .3rem;
+    box-shadow: .1rem .1rem;
+}
+
+.tutoText {
+    color: white;
+    font-size: 1.3rem;
+    transition: opacity 400ms ease;
+}
+
+.tutorial button {
+    background-color: #28231C;
+    border: none;
+    color: white;
+    padding: .6rem;
+    font-size: 1rem;
+    border-radius: 4px;
+    position: absolute;
+    bottom: 10px;
+    right: 10px;
+    cursor: pointer;
 }
 
 .mana-indicator {
@@ -91,6 +173,7 @@ main {
     border-radius: 1.25rem;
     background: rgba(239, 200, 139, 0.20);
     margin-top: 3rem;
+    box-shadow: .3rem .3rem;
 }
 
 .card-field {
