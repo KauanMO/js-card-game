@@ -60,7 +60,30 @@ function tutorial() {
                 switchTurn()
                 firstTurn = true
                 text.innerText = `Cada carta possui uma foto, nome, força e ataque`
-                
+                document.querySelector('.cardExample').style.opacity = 1
+                break
+            case 6:
+                text.innerText = `E algumas possuem efeitos em jogo`
+                document.querySelector('.exampleCardEffect').innerText = 'Aumenta seu ataque a cada 2 rodadas em jogo'
+                break
+            case 7:
+                document.querySelector('.cardExample').style.opacity = 0
+                text.innerText = `A cada fim de turno, as cartas lutam, 
+                subtraindo a força das aliadas da defesa das adversárias adjacentes`
+                break
+            case 8:
+                text.innerText = `Quanda não há uma carta na frente de outra, ela bate diretamente contra o adversário`
+                break
+            case 9:
+                text.innerText = `Ganha o adversário que levar a vida do outro a 0 primeiro`
+                break;
+            case 10:
+                text.innerText = `Boa sorte.`
+            case 11:
+                tutorialElement.style.opacity = 0
+                gameStart()
+                break
+
         }
         text.style.opacity = 1
     }, 400);
@@ -191,7 +214,7 @@ function playCard(card, cost) {
 }
 
 function switchTurn() {
-    if(mana){
+    if (mana) {
         manaind.innerText = mana
     }
     let coin = document.querySelector('.coin')
