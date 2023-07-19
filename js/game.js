@@ -19,7 +19,11 @@ let cards = [
     }
 ]
 
-let tutorialFase = 0, cemetery = [], deck, opponentLife = 100, playerLife = 100, firstTurn = true, turn = 'player', hand = [], mana, manaind = document.querySelector('.mana-indicator')
+let tutorialFase = 0, geralMana = 2,
+    cemetery = [], deck, opponentLife = 100,
+    playerLife = 100, firstTurn = true, turn = 'player',
+    hand = [], mana, opponentMana, manaind = document.querySelector('.mana-indicator'),
+    opponentHand = []
 
 document.querySelector('#pularTuto').addEventListener('click', () => {
     tutorialElement = document.querySelector('.tutorial')
@@ -190,7 +194,11 @@ function createCard() {
         verifyManaCard(card, cardInfo.cost)
     })
 
-    buyCard(card)
+    if (turn == 'player') {
+        buyCard(card)
+    } else {
+        opponentBuyCard(card)
+    }
 }
 
 function verifyManaCard(card, cost) {
@@ -227,6 +235,10 @@ function buyCard(card) {
     }
 
     document.querySelector('.hand').appendChild(card)
+}
+
+function opponentBuyCard(card) {
+    opponentHand.push(card)
 }
 
 function playCard(card, cost) {
@@ -266,28 +278,31 @@ function switchTurn() {
     if (turn == 'opponent') {
         hand.style.bottom = '0'
         turn = 'player'
+        geralMana++
+        mana = geralMana
+        manaind.innerText = mana
         coin.addEventListener('click', switchTurn)
         coin.style.background = "url('../assets/img/water-gif.gif')"
     } else {
+        attack()
         hand.style.bottom = '-20rem'
-        turn = 'opponent'
+        opponentMana = geralMana
         coin.removeEventListener('click', switchTurn)
         coin.style.background = 'black'
         coin.style.cursor = 'unset'
-    }
-
-    if (firstTurn) {
-        attack()
-    } else {
-        firstTurn = false
+        turn = 'opponent'
+        opponentPlay()
     }
 }
 
 function attack() {
-    let inFieldCards = document.querySelectorAll('.player-slot>.card')
-    inFieldCards.forEach(card => {
-        verifyOpponentCards(card)
-    })
+    if (turn == 'player') {
+        let inFieldCards = document.querySelectorAll('.player-slot>.card')
+        inFieldCards.forEach(card => {
+            verifyOpponentCards(card)
+        })
+    } else {
+    }
 }
 
 function verifyOpponentCards(card) {
@@ -340,4 +355,41 @@ function killCard(card) {
     setTimeout(() => {
         card.parentNode.innerHTML = ''
     }, 400);
+}
+
+function opponentPlay() {
+    if (firstTurn <= 2) {
+        for (let i = 0; i < 5; i++) {
+            createCard()
+        }
+    } else {
+        createCard()
+    }
+
+    getOpponentCard()
+}
+
+function getOpponentCard() {
+    possibleCards = checkPossibleOpponentsCards()
+    if(possibleCards){
+        console.log(possibleCards);
+    }else{
+        setTimeout(() => {
+            switchTurn()
+        }, 1000);
+    }
+}
+
+function checkPossibleOpponentsCards() {
+    let possibleCards = []
+    opponentHand.forEach(card => {
+        if (Number(card.querySelector('.cardCost').innerText) < opponentMana) {
+            possibleCards.push(card)
+        }
+    })
+    if(possibleCards.length>1){
+        return possibleCards
+    }else{
+        return false
+    }
 }
