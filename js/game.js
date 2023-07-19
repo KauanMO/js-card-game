@@ -291,10 +291,15 @@ function attack() {
 }
 
 function verifyOpponentCards(card) {
+    let opponentLife = document.querySelector('.opponentLife')
     let opponnetCard = document.querySelector(`.opponent-slot#${card.parentNode.id}>.card`)
     if (opponnetCard) {
         battle(card, opponnetCard)
     } else {
+        attackAnimate(card)
+        setTimeout(() => {
+            opponentLife.innerText = Number(opponentLife.innerText) - Number(card.querySelector('#strengthValue').innerText)
+        }, 550);
     }
 }
 
@@ -315,9 +320,11 @@ function battle(playerCard, opponentCard) {
 
 function attackAnimate(card, opponentCard) {
     card.style.animation = 'playerAttack .3s'
-    setTimeout(() => {
-        opponentCard.style.animation = 'opponentDamaged .3s'
-    }, 80);
+    if (opponentCard) {
+        setTimeout(() => {
+            opponentCard.style.animation = 'opponentDamaged .3s'
+        }, 80);
+    }
     setTimeout(() => {
         card.style.animation = 'unset'
     }, 600);
