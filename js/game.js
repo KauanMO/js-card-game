@@ -301,8 +301,6 @@ function switchTurn() {
         turn = 'opponent'
         opponentPlay()
     }
-
-
     turnCount++
 }
 
@@ -323,31 +321,45 @@ function attack() {
 function opponentVerifyPlayerCards(card) {
     let playerLife = document.querySelector('.playerLife')
     let playerCard = document.querySelector(`.player-slot#${card.parentNode.id}>.card`)
-    playerCard
-        ? battle(card, playerCard)
-        : attackAnimate(card)
-    setTimeout(() => {
-        playerLife.innerText = Number(playerLife.innerText) - Number(card.querySelector('#strengthValue').innerText)
-    }, 550);
+    if (playerCard) {
+        battle(card, playerCard)
+    } else {
+        attackAnimate(card)
+        setTimeout(() => {
+            playerLife.innerText = Number(playerLife.innerText) - Number(card.querySelector('#strengthValue').innerText)
+        }, 550);
+    }
 }
 
 function verifyOpponentCards(card) {
     let opponentLife = document.querySelector('.opponentLife')
     let opponnetCard = document.querySelector(`.opponent-slot#${card.parentNode.id}>.card`)
-    opponnetCard
-        ? battle(card, opponnetCard)
-        : attackAnimate(card)
-    setTimeout(() => {
-        opponentLife.innerText = Number(opponentLife.innerText) - Number(card.querySelector('#strengthValue').innerText)
-    }, 550);
+    if (opponnetCard) {
+        battle(card, opponnetCard)
+    } else {
+        attackAnimate(card)
+        setTimeout(() => {
+            opponentLife.innerText = Number(opponentLife.innerText) - Number(card.querySelector('#strengthValue').innerText)
+        }, 550);
+    }
+
 }
 
 function battle(attacker, defenser) {
-    let defense = Number(defenser.querySelector('#defenseValue').innerText)
-    let attack = Number(attacker.querySelector('#strengthValue').innerText)
+    let defense = Number(defenser.querySelector('#defenseValue').innerText),
+        attack = Number(attacker.querySelector('#strengthValue').innerText), life
+
+    turn == 'player'
+        ? life = document.querySelector('.opponentLife')
+        : life = document.querySelector('.playerLife')
+
     attackAnimate(attacker, defenser)
     setTimeout(() => {
-        if (defense <= attack) {
+        if (defense == attack) {
+            killCard(defenser)
+        } else if (attack > defense) {
+            life.innerHTML = life.innerText - (attack - defense)
+            console.log(life);
             killCard(defenser)
         } else {
             defenser.querySelector('#defenseValue').innerText = defense - attack
@@ -357,8 +369,8 @@ function battle(attacker, defenser) {
 
 function attackAnimate(attacker, defenser) {
     turn == 'player'
-    ? attacker.style.animation = 'playerAttack .3s'
-    : attacker.style.animation = 'opponentAttack .3s'
+        ? attacker.style.animation = 'playerAttack .3s'
+        : attacker.style.animation = 'opponentAttack .3s'
     defenser
         ? setTimeout(() => {
             defenser.style.animation = 'opponentDamaged .3s'
@@ -382,7 +394,7 @@ function killCard(card) {
 }
 
 function opponentPlay() {
-    if (turnCount <= 2) {
+    if (turnCount < 2) {
         for (let i = 0; i < 5; i++) {
             createCard()
         }
@@ -414,7 +426,11 @@ function opponentPlayCard(possibleCards) {
         document.querySelector(`.opponent-slot#${enemy.id}`).appendChild(chosenCard)
     } else {
         let possibleSlots = document.querySelectorAll('.opponent-slot:empty')
-        possibleSlots[parseInt(Math.random() * possibleSlots.length)].appendChild(chosenCard)
+        if (possibleSlots.length > 0) {
+            possibleSlots[parseInt(Math.random() * possibleSlots.length)].appendChild(chosenCard)
+        } else {
+            return switchTurn()
+        }
     }
     opponentHand.splice(opponentHand.indexOf(chosenCard), 1)
     placeCardAnimation(chosenCard)
