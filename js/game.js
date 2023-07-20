@@ -166,6 +166,7 @@ function createCard() {
 
     card.classList.add('inHandCard')
     card.id = cardInfo.id
+    card.style.animation = 'unset'
     pic.classList.add('cardPic')
     name.classList.add('cardName')
     effect.classList.add('cardEffect')
@@ -241,6 +242,13 @@ function opponentBuyCard(card) {
     opponentHand.push(card)
 }
 
+function placeCardAnimation(card) {
+    document.querySelectorAll('.card').forEach(fieldCard => {
+        fieldCard.style.animation = 'unset'
+    })
+    card.style.animation = 'placeCard .3s forwards'
+}
+
 function playCard(card, cost) {
     let hand = document.querySelector('.hand')
     card.style.transform = 'translateY(-16rem)'
@@ -251,12 +259,12 @@ function playCard(card, cost) {
         target.appendChild(card)
         card.classList = ['card']
         card.style.transform = ''
-
+        mana -= cost
+        hand.style.transform = 'translateY(0)'
+        placeCardAnimation(card)
         slots.forEach(slot => {
             slot.replaceWith(slot.cloneNode(true))
         })
-        hand.style.transform = 'translateY(0)'
-        mana -= cost
     }
 
     slots.forEach(slot => {
@@ -391,6 +399,8 @@ function opponentPlayCard(possibleCards) {
         let possibleSlots = document.querySelectorAll('.opponent-slot:empty')
         possibleSlots[parseInt(Math.random() * possibleSlots.length)].appendChild(chosenCard)
     }
+
+    placeCardAnimation(chosenCard)
 }
 
 function opponentDecideEnemy(playerCardsSlots, chosenCard) {

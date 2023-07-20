@@ -112,6 +112,18 @@
     }
 }
 
+@keyframes placeCard {
+    from {
+        height: 0;
+        opacity: 0;
+    }
+    
+    to {
+        height: 16.875rem;
+        opacity: 1;
+    }
+}
+
 .cardExample {
     opacity: 0;
     position: absolute;
@@ -223,7 +235,7 @@ main {
 .mana-indicator {
     position: absolute;
     font-size: 2.6rem;
-    background: var(--light-blue);
+    background: url(../assets/img/water-gif.gif);
     border-radius: 50%;
     width: 3rem;
     height: 3rem;
