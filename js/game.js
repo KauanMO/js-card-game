@@ -377,7 +377,7 @@ function opponentPlay() {
 }
 
 function getOpponentPossibleCards() {
-    possibleCards = opponentHand.filter(card => Number(card.querySelector('.cardCost').innerText) < opponentMana);
+    possibleCards = opponentHand.filter(card => Number(card.querySelector('.cardCost').innerText) <= opponentMana);
     possibleCards.length > 0 ? opponentPlayCard(possibleCards) : setTimeout(switchTurn, 1000)
 }
 
@@ -400,7 +400,13 @@ function opponentPlayCard(possibleCards) {
         possibleSlots[parseInt(Math.random() * possibleSlots.length)].appendChild(chosenCard)
     }
 
+    opponentHand.splice(opponentHand.indexOf(chosenCard), 1)
+
     placeCardAnimation(chosenCard)
+
+    opponentMana -= Number(chosenCard.querySelector('.cardCost').innerText)
+
+    getOpponentPossibleCards()
 }
 
 function opponentDecideEnemy(playerCardsSlots, chosenCard) {
@@ -412,6 +418,5 @@ function opponentDecideEnemy(playerCardsSlots, chosenCard) {
             selectedCard = playerCard
         }
     })
-
     return selectedCard
 }
