@@ -23,7 +23,7 @@ let tutorialFase = 0, geralMana = 2,
     cemetery = [], deck, opponentLife = 100,
     playerLife = 100, firstTurn = true, turn = 'player',
     hand = [], mana, opponentMana, manaind = document.querySelector('.mana-indicator'),
-    opponentHand = []
+    opponentHand = [], turnCount = 0
 
 document.querySelector('#pularTuto').addEventListener('click', () => {
     tutorialElement = document.querySelector('.tutorial')
@@ -281,6 +281,9 @@ function switchTurn() {
 
     manaind.innerText = mana ?? ''
 
+    if (turnCount >= 2) {
+        attack()
+    }
     if (turn == 'opponent') {
         hand.style.bottom = '0'
         turn = 'player'
@@ -290,7 +293,6 @@ function switchTurn() {
         coin.addEventListener('click', switchTurn)
         coin.style.background = "url('./assets/img/water-gif.gif')"
     } else {
-        attack()
         hand.style.bottom = '-20rem'
         opponentMana = geralMana
         coin.removeEventListener('click', switchTurn)
@@ -299,6 +301,9 @@ function switchTurn() {
         turn = 'opponent'
         opponentPlay()
     }
+
+
+    turnCount++
 }
 
 function attack() {
@@ -308,7 +313,22 @@ function attack() {
             verifyOpponentCards(card)
         })
     } else {
+        let inFieldCards = document.querySelectorAll('.opponent-slot>.card')
+        inFieldCards.forEach(card => {
+            opponentVerifyPlayerCards(card)
+        })
     }
+}
+
+function opponentVerifyPlayerCards(card) {
+    let playerLife = document.querySelector('.playerLife')
+    let playerCard = document.querySelector(`.player-slot#${card.parentNode.id}>.card`)
+    playerCard
+        ? battle(card, playerCard)
+        : attackAnimate(card)
+    setTimeout(() => {
+        playerLife.innerText = Number(playerLife.innerText) - Number(card.querySelector('#strengthValue').innerText)
+    }, 550);
 }
 
 function verifyOpponentCards(card) {
@@ -316,38 +336,36 @@ function verifyOpponentCards(card) {
     let opponnetCard = document.querySelector(`.opponent-slot#${card.parentNode.id}>.card`)
     opponnetCard
         ? battle(card, opponnetCard)
-        :
-        attackAnimate(card)
+        : attackAnimate(card)
     setTimeout(() => {
         opponentLife.innerText = Number(opponentLife.innerText) - Number(card.querySelector('#strengthValue').innerText)
     }, 550);
 }
 
-function battle(playerCard, opponentCard) {
-    let opponentDefense = Number(opponentCard.querySelector('#defenseValue').innerText)
-    let playerStrength = Number(playerCard.querySelector('#strengthValue').innerText)
-
-    attackAnimate(playerCard, opponentCard)
-
+function battle(attacker, defenser) {
+    let defense = Number(defenser.querySelector('#defenseValue').innerText)
+    let attack = Number(attacker.querySelector('#strengthValue').innerText)
+    attackAnimate(attacker, defenser)
     setTimeout(() => {
-        if (opponentDefense <= playerStrength) {
-            killCard(opponentCard)
+        if (defense <= attack) {
+            killCard(defenser)
         } else {
-            opponentCard.querySelector('#defenseValue').innerText = opponentDefense - playerStrength
+            defenser.querySelector('#defenseValue').innerText = defense - attack
         }
     }, 550);
 }
 
-function attackAnimate(card, opponentCard) {
-    card.style.animation = 'playerAttack .3s'
-
-    opponentCard
+function attackAnimate(attacker, defenser) {
+    turn == 'player'
+    ? attacker.style.animation = 'playerAttack .3s'
+    : attacker.style.animation = 'opponentAttack .3s'
+    defenser
         ? setTimeout(() => {
-            opponentCard.style.animation = 'opponentDamaged .3s'
+            defenser.style.animation = 'opponentDamaged .3s'
         }, 80)
         :
         setTimeout(() => {
-            card.style.animation = 'unset'
+            attacker.style.animation = 'unset'
         }, 600);
 }
 
@@ -364,7 +382,7 @@ function killCard(card) {
 }
 
 function opponentPlay() {
-    if (firstTurn <= 2) {
+    if (turnCount <= 2) {
         for (let i = 0; i < 5; i++) {
             createCard()
         }
@@ -386,7 +404,6 @@ function opponentPlayCard(possibleCards) {
     let playerCardsSlots = document.querySelectorAll('.player-slot:not(:empty)')
     const possibleOpponentSlot = []
     chosenCard.classList = ['card']
-
     playerCardsSlots.forEach(cardSlot => {
         if (document.querySelector(`.opponent-slot#${cardSlot.id}:empty`)) {
             possibleOpponentSlot.push(cardSlot)
@@ -399,13 +416,9 @@ function opponentPlayCard(possibleCards) {
         let possibleSlots = document.querySelectorAll('.opponent-slot:empty')
         possibleSlots[parseInt(Math.random() * possibleSlots.length)].appendChild(chosenCard)
     }
-
     opponentHand.splice(opponentHand.indexOf(chosenCard), 1)
-
     placeCardAnimation(chosenCard)
-
     opponentMana -= Number(chosenCard.querySelector('.cardCost').innerText)
-
     getOpponentPossibleCards()
 }
 

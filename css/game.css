@@ -78,6 +78,12 @@
     }
 }
 
+@keyframes opponentAttack {
+    50% {
+        transform: translateY(80px);
+    }
+}
+
 @keyframes opponentDamaged {
     0% {
         transform: translate(1px, 1px) rotate(0deg);
