@@ -363,8 +363,9 @@ function opponentPlay() {
     } else {
         createCard()
     }
-
-    getOpponentPossibleCards()
+    setTimeout(() => {
+        getOpponentPossibleCards()
+    }, 1500);
 }
 
 function getOpponentPossibleCards() {
@@ -374,26 +375,30 @@ function getOpponentPossibleCards() {
 
 function opponentPlayCard(possibleCards) {
     const chosenCard = possibleCards[parseInt(Math.random() * possibleCards.length)]
-    const playerCardsSlots = document.querySelectorAll('.player-slot:not(:empty)')
+    let playerCardsSlots = document.querySelectorAll('.player-slot:not(:empty)')
+    const possibleOpponentSlot = []
     chosenCard.classList = ['card']
-    if (playerCardsSlots.length > 0) {
-        let enemy = opponentDecideEnemy(playerCardsSlots, chosenCard)
-        if (enemy === 'NoKillableCards') {
-            console.log('qualquer oponente')
-        } else {
-            document.querySelector(`.opponent-slot#${enemy.id}`).appendChild(chosenCard)
-            console.log(chosenCard)
+
+    playerCardsSlots.forEach(cardSlot => {
+        if (document.querySelector(`.opponent-slot#${cardSlot.id}:empty`)) {
+            possibleOpponentSlot.push(cardSlot)
         }
+    })
+    if (possibleOpponentSlot.length > 0) {
+        let enemy = opponentDecideEnemy(possibleOpponentSlot, chosenCard)
+        document.querySelector(`.opponent-slot#${enemy.id}`).appendChild(chosenCard)
     } else {
-        console.log('sem inimigos')
+        let possibleSlots = document.querySelectorAll('.opponent-slot:empty')
+        possibleSlots[parseInt(Math.random() * possibleSlots.length)].appendChild(chosenCard)
     }
 }
 
 function opponentDecideEnemy(playerCardsSlots, chosenCard) {
-    let selectedCard = 'NoKillableCards'
+    let selectedCard = playerCardsSlots[0]
     playerCardsSlots.forEach(playerCard => {
-        if (Number(playerCard.firstChild.querySelector('#defenseValue').innerText)
-            <= Number(chosenCard.querySelector('#strengthValue').innerText)) {
+        if ((Number(playerCard.firstChild.querySelector('#defenseValue').innerText)
+            <= Number(chosenCard.querySelector('#strengthValue').innerText))
+        ) {
             selectedCard = playerCard
         }
     })
