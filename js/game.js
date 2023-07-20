@@ -177,9 +177,9 @@ function createCard() {
     name.innerText = cardInfo.name
     effect.innerText = cardInfo.effect
     cost.innerText = cardInfo.cost
-    strength.innerHTML = `<div style="background-image: url('../assets/img/atk.png')" class='card-icon'></div> <span id='strengthValue'>${cardInfo.strength}</span>`
-    defense.innerHTML = `<div style="background-image: url('../assets/img/defense.png')" class='card-icon'></div> <span id='defenseValue'>${cardInfo.defense}</span>`
-    pic.style.background = `center url(../assets/img/${cardInfo.pic}) no-repeat`
+    strength.innerHTML = `<div style="background-image: url('./assets/img/atk.png')" class='card-icon'></div> <span id='strengthValue'>${cardInfo.strength}</span>`
+    defense.innerHTML = `<div style="background-image: url('./assets/img/defense.png')" class='card-icon'></div> <span id='defenseValue'>${cardInfo.defense}</span>`
+    pic.style.background = `center url(./assets/img/${cardInfo.pic}) no-repeat`
     pic.style.backgroundSize = 'cover'
 
     card.appendChild(pic)
@@ -271,9 +271,7 @@ function switchTurn() {
     let cards = document.querySelectorAll('.card')
     let coin = document.querySelector('.coin')
 
-    if (mana) {
-        manaind.innerText = mana
-    }
+    manaind.innerText = mana ?? ''
 
     if (turn == 'opponent') {
         hand.style.bottom = '0'
@@ -282,7 +280,7 @@ function switchTurn() {
         mana = geralMana
         manaind.innerText = mana
         coin.addEventListener('click', switchTurn)
-        coin.style.background = "url('../assets/img/water-gif.gif')"
+        coin.style.background = "url('./assets/img/water-gif.gif')"
     } else {
         attack()
         hand.style.bottom = '-20rem'
@@ -308,14 +306,13 @@ function attack() {
 function verifyOpponentCards(card) {
     let opponentLife = document.querySelector('.opponentLife')
     let opponnetCard = document.querySelector(`.opponent-slot#${card.parentNode.id}>.card`)
-    if (opponnetCard) {
-        battle(card, opponnetCard)
-    } else {
+    opponnetCard
+        ? battle(card, opponnetCard)
+        :
         attackAnimate(card)
-        setTimeout(() => {
-            opponentLife.innerText = Number(opponentLife.innerText) - Number(card.querySelector('#strengthValue').innerText)
-        }, 550);
-    }
+    setTimeout(() => {
+        opponentLife.innerText = Number(opponentLife.innerText) - Number(card.querySelector('#strengthValue').innerText)
+    }, 550);
 }
 
 function battle(playerCard, opponentCard) {
@@ -335,14 +332,15 @@ function battle(playerCard, opponentCard) {
 
 function attackAnimate(card, opponentCard) {
     card.style.animation = 'playerAttack .3s'
-    if (opponentCard) {
-        setTimeout(() => {
+
+    opponentCard
+        ? setTimeout(() => {
             opponentCard.style.animation = 'opponentDamaged .3s'
-        }, 80);
-    }
-    setTimeout(() => {
-        card.style.animation = 'unset'
-    }, 600);
+        }, 80)
+        :
+        setTimeout(() => {
+            card.style.animation = 'unset'
+        }, 600);
 }
 
 function killAnimate(card) {
@@ -366,30 +364,39 @@ function opponentPlay() {
         createCard()
     }
 
-    getOpponentCard()
+    getOpponentPossibleCards()
 }
 
-function getOpponentCard() {
-    possibleCards = checkPossibleOpponentsCards()
-    if(possibleCards){
-        console.log(possibleCards);
-    }else{
-        setTimeout(() => {
-            switchTurn()
-        }, 1000);
+function getOpponentPossibleCards() {
+    possibleCards = opponentHand.filter(card => Number(card.querySelector('.cardCost').innerText) < opponentMana);
+    possibleCards.length > 0 ? opponentPlayCard(possibleCards) : setTimeout(switchTurn, 1000)
+}
+
+function opponentPlayCard(possibleCards) {
+    const chosenCard = possibleCards[parseInt(Math.random() * possibleCards.length)]
+    const playerCardsSlots = document.querySelectorAll('.player-slot:not(:empty)')
+    chosenCard.classList = ['card']
+    if (playerCardsSlots.length > 0) {
+        let enemy = opponentDecideEnemy(playerCardsSlots, chosenCard)
+        if (enemy === 'NoKillableCards') {
+            console.log('qualquer oponente')
+        } else {
+            document.querySelector(`.opponent-slot#${enemy.id}`).appendChild(chosenCard)
+            console.log(chosenCard)
+        }
+    } else {
+        console.log('sem inimigos')
     }
 }
 
-function checkPossibleOpponentsCards() {
-    let possibleCards = []
-    opponentHand.forEach(card => {
-        if (Number(card.querySelector('.cardCost').innerText) < opponentMana) {
-            possibleCards.push(card)
+function opponentDecideEnemy(playerCardsSlots, chosenCard) {
+    let selectedCard = 'NoKillableCards'
+    playerCardsSlots.forEach(playerCard => {
+        if (Number(playerCard.firstChild.querySelector('#defenseValue').innerText)
+            <= Number(chosenCard.querySelector('#strengthValue').innerText)) {
+            selectedCard = playerCard
         }
     })
-    if(possibleCards.length>1){
-        return possibleCards
-    }else{
-        return false
-    }
+
+    return selectedCard
 }
