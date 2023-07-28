@@ -137,20 +137,41 @@ document.querySelector('#tutoOk').addEventListener('click', () => {
 function gameStart() {
     mana = 2
     manaind.innerText = mana
-    let hand = document.querySelector('.hand')
-
+    
     window.addEventListener('click', () => {
         manaind.innerText = mana
     })
-
+    
     document.querySelector('.coin').addEventListener('click', switchTurn)
-
+    
     setTimeout(() => {
+        playerPlay()
+    }, 0);
+}
+
+function playerPlay(){
+    let hand = document.querySelector('.hand')
+    if(turnCount === 0){
         for (let i = 0; i < 5; i++) {
             createCard()
         }
-        hand.style.transform = 'translateY(0)'
-    }, 0);
+    }else{
+        createCard()
+    }
+    hand.style.transform = 'translateY(0)'
+}
+
+function opponentPlay() {
+    if (turnCount === 1) {
+        for (let i = 0; i < 5; i++) {
+            createCard()
+        }
+    } else {
+        createCard()
+    }
+    setTimeout(() => {
+        getOpponentPossibleCards()
+    }, 1500);
 }
 
 function createCard() {
@@ -216,7 +237,7 @@ function verifyManaCard(card, cost) {
         } else if (card.target.classList.contains('cardStrength') || card.target.classList.contains('cardDefense')) {
             playCard(card.target.parentNode.parentNode, cost)
 
-        } else if (card.target.classList.contains('card-icon')) {
+        } else if (card.target.classList.contains('card-icon') || card.target.id == 'strengthValue' || card.target.id == 'defenseValue') {
             playCard(card.target.parentNode.parentNode.parentNode, cost)
         }
         else {
@@ -285,7 +306,6 @@ function switchTurn() {
         attack()
     }
     if (turn == 'opponent') {
-        hand.style.bottom = '0'
         turn = 'player'
         geralMana++
         mana = geralMana
@@ -293,8 +313,9 @@ function switchTurn() {
         coin.style.cursor = 'pointer'
         coin.addEventListener('click', switchTurn)
         coin.style.background = "url('./assets/img/water-gif.gif')"
+        playerPlay()
     } else {
-        hand.style.bottom = '-20rem'
+        hand.style.transform = 'translateY(20rem)'
         opponentMana = geralMana
         coin.removeEventListener('click', switchTurn)
         coin.style.background = 'black'
@@ -302,7 +323,6 @@ function switchTurn() {
         turn = 'opponent'
         opponentPlay()
     }
-    createCard
     turnCount++
 }
 
@@ -361,7 +381,6 @@ function battle(attacker, defenser) {
             killCard(defenser)
         } else if (attack > defense) {
             life.innerHTML = life.innerText - (attack - defense)
-            console.log(life);
             killCard(defenser)
         } else {
             defenser.querySelector('#defenseValue').innerText = defense - attack
@@ -393,19 +412,6 @@ function killCard(card) {
     setTimeout(() => {
         card.parentNode.innerHTML = ''
     }, 400);
-}
-
-function opponentPlay() {
-    if (turnCount < 2) {
-        for (let i = 0; i < 5; i++) {
-            createCard()
-        }
-    } else {
-        createCard()
-    }
-    setTimeout(() => {
-        getOpponentPossibleCards()
-    }, 1500);
 }
 
 function getOpponentPossibleCards() {
