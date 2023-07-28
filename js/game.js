@@ -16,6 +16,15 @@ let cards = [
         defense: 3,
         pic: 'dragon.png',
         effect: ''
+    },
+    {
+        id: 3,
+        name: 'DbCM',
+        cost: 2,
+        strength: 2,
+        defense: 1,
+        pic: 'DbCM.png',
+        effect: ''
     }
 ]
 
