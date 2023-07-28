@@ -46,6 +46,7 @@ function tutorial() {
     text.style.opacity = 0
     spinner.style.opacity = 0
     tutorialFase++
+    let coin = document.querySelector('.coin')
 
     setTimeout(() => {
         switch (tutorialFase) {
@@ -72,11 +73,10 @@ function tutorial() {
                 spinner.style.opacity = 1
                 spinner.style.bottom = '49.15%'
                 spinner.style.left = '47.9%'
-                switchTurn()
+                coin.style.background = "black"
                 break
             case 5:
-                switchTurn()
-                firstTurn = true
+                coin.style.background = "url('./assets/img/water-gif.gif')"
                 text.innerText = `Cada carta possui uma foto, nome, força e ataque`
                 document.querySelector('.cardExample').style.opacity = 1
                 break
@@ -290,6 +290,7 @@ function switchTurn() {
         geralMana++
         mana = geralMana
         manaind.innerText = mana
+        coin.style.cursor = 'pointer'
         coin.addEventListener('click', switchTurn)
         coin.style.background = "url('./assets/img/water-gif.gif')"
     } else {
@@ -301,6 +302,7 @@ function switchTurn() {
         turn = 'opponent'
         opponentPlay()
     }
+    createCard
     turnCount++
 }
 
