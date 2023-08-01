@@ -2,29 +2,48 @@ let cards = [
     {
         id: 1,
         name: 'Boxer',
+        type: ['human fighter'],
         cost: 1,
         strength: 1,
         defense: 1,
-        pic: 'boxer.png',
-        effect: ''
+        pic: 'boxer.png'
     },
     {
         id: 2,
         name: 'Dragon',
+        type: ['dragon'],
         cost: 3,
         strength: 3,
         defense: 3,
-        pic: 'dragon.png',
-        effect: ''
+        pic: 'dragon.png'
     },
     {
         id: 3,
         name: 'DbCM',
+        type: ['machine', 'cute'],
         cost: 2,
         strength: 2,
         defense: 1,
-        pic: 'DbCM.png',
-        effect: ''
+        pic: 'DbCM.png'
+    },
+    {
+        id: 4,
+        name: 'Stone Giant',
+        type: ['stone', 'giant'],
+        cost: 3,
+        strength: 1,
+        defense: 3,
+        pic: 'stoneGiant.png'
+    },
+    {
+        id: 5,
+        name: 'Dragon Trainer',
+        type: ['human'],
+        cost: 2,
+        strength: 1,
+        defense: 2,
+        pic: 'dragonTrainer.png',
+        effect: 'Fortalece 1 ponto de ataque e defesa de todos as cartas do tipo dragão'
     }
 ]
 
@@ -146,32 +165,32 @@ document.querySelector('#tutoOk').addEventListener('click', () => {
 function gameStart() {
     mana = 2
     manaind.innerText = mana
-    
+
     window.addEventListener('click', () => {
         manaind.innerText = mana
     })
-    
+
     document.querySelector('.coin').addEventListener('click', switchTurn)
-    
+
     setTimeout(() => {
         playerPlay()
     }, 0);
 }
 
-function playerPlay(){
+function playerPlay() {
     let hand = document.querySelector('.hand')
-    if(turnCount === 0){
+    if (turnCount < 1) {
         for (let i = 0; i < 5; i++) {
             createCard()
         }
-    }else{
+    } else {
         createCard()
     }
     hand.style.transform = 'translateY(0)'
 }
 
 function opponentPlay() {
-    if (turnCount === 1) {
+    if (turnCount < 2) {
         for (let i = 0; i < 5; i++) {
             createCard()
         }
@@ -184,7 +203,7 @@ function opponentPlay() {
 }
 
 function createCard() {
-    let cardInfo = cards[parseInt(Math.random() * 2)]
+    let cardInfo = cards[parseInt(Math.random() * cards.length)]
     const card = document.createElement('div')
     const pic = document.createElement('div')
     const name = document.createElement('span')
@@ -206,7 +225,9 @@ function createCard() {
     defense.classList.add('cardDefense')
 
     name.innerText = cardInfo.name
-    effect.innerText = cardInfo.effect
+    cardInfo.effect
+        ? effect.innerText = cardInfo.effect
+        : effect.innerText = ''
     cost.innerText = cardInfo.cost
     strength.innerHTML = `<div style="background-image: url('./assets/img/atk.png')" class='card-icon'></div> <span id='strengthValue'>${cardInfo.strength}</span>`
     defense.innerHTML = `<div style="background-image: url('./assets/img/defense.png')" class='card-icon'></div> <span id='defenseValue'>${cardInfo.defense}</span>`
@@ -215,9 +236,9 @@ function createCard() {
 
     card.appendChild(pic)
     card.appendChild(name)
-    card.appendChild(effect)
     card.appendChild(cost)
     card.appendChild(attributes)
+    card.appendChild(effect)
     attributes.appendChild(strength)
     attributes.appendChild(defense)
 
