@@ -43,7 +43,8 @@ let cards = [
         strength: 1,
         defense: 2,
         pic: 'dragonTrainer.png',
-        effect: 'Fortalece 1 ponto de ataque e defesa de todos as cartas do tipo dragão'
+        effectLabel: 'Fortalece 1 ponto de ataque e defesa de todos as cartas do tipo dragão',
+        effect: 'fortifyDragonsByOne'
     }
 ]
 
@@ -207,7 +208,7 @@ function createCard() {
     const card = document.createElement('div')
     const pic = document.createElement('div')
     const name = document.createElement('span')
-    const effect = document.createElement('span')
+    const effectLabel = document.createElement('span')
     const cost = document.createElement('div')
     const strength = document.createElement('span')
     const defense = document.createElement('span')
@@ -218,16 +219,22 @@ function createCard() {
     card.style.animation = 'unset'
     pic.classList.add('cardPic')
     name.classList.add('cardName')
-    effect.classList.add('cardEffect')
+    effectLabel.classList.add('cardEffectLabel')
     cost.classList.add('cardCost')
     attributes.classList.add('cardAttributes')
     strength.classList.add('cardStrength')
     defense.classList.add('cardDefense')
 
+    if (cardInfo.effectLabel) {
+        effectLabel.innerText = cardInfo.effectLabel
+        console.log(cardInfo.effect);
+        window[cardInfo.effect]()
+    } else {
+        effectLabel.innerText = ''
+    }
+
+
     name.innerText = cardInfo.name
-    cardInfo.effect
-        ? effect.innerText = cardInfo.effect
-        : effect.innerText = ''
     cost.innerText = cardInfo.cost
     strength.innerHTML = `<div style="background-image: url('./assets/img/atk.png')" class='card-icon'></div> <span id='strengthValue'>${cardInfo.strength}</span>`
     defense.innerHTML = `<div style="background-image: url('./assets/img/defense.png')" class='card-icon'></div> <span id='defenseValue'>${cardInfo.defense}</span>`
@@ -238,7 +245,7 @@ function createCard() {
     card.appendChild(name)
     card.appendChild(cost)
     card.appendChild(attributes)
-    card.appendChild(effect)
+    card.appendChild(effectLabel)
     attributes.appendChild(strength)
     attributes.appendChild(defense)
 
