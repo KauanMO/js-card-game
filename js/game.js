@@ -1,5 +1,3 @@
-let cards = JSON.parse(localStorage.getItem('cardsJson'))
-
 let tutorialFase = 0, geralMana = 2,
     cemetery = [], deck, opponentLife = 100,
     playerLife = 100, firstTurn = true, turn = 'player',

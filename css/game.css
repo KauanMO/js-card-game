@@ -10,6 +10,21 @@
     user-select: none;
 }
 
+@keyframes attributeFortify {
+    0% {
+        color: green;
+    }
+
+    50%{
+        font-size: 1.6rem;
+    }
+    
+    100%{
+        font-size: 1rem;
+        color: black;
+    }
+}
+
 @keyframes appear {
     from {
         opacity: 0;
@@ -123,7 +138,7 @@
         height: 0;
         opacity: 0;
     }
-    
+
     to {
         height: 16.875rem;
         opacity: 1;
@@ -358,12 +373,6 @@ main {
     width: 100%;
     justify-content: space-around;
     bottom: 10px;
-}
-
-.cardStrength,
-.cardDefense {
-    display: flex;
-    font-size: 1.3rem;
 }
 
 .card-icon {

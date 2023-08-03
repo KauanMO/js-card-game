@@ -1,8 +1,8 @@
-const cardsJson = [
+const cards = [
     {
         id: 0,
         name: 'Boxer',
-        type: ['human fighter'],
+        type: ['human', 'fighter'],
         cost: 1,
         strength: 1,
         defense: 1,
@@ -43,11 +43,8 @@ const cardsJson = [
         strength: 1,
         defense: 2,
         pic: 'dragonTrainer.png',
-        effectLabel: 'Fortalece 1 ponto de ataque e defesa de todos as cartas do tipo dragão',
+        effectLabel: 'Fortalece 1 ponto de ataque e defesa de todos as cartas do tipo dragão adjacentes',
         effect: 'fortifySideDragonsByOne',
         effectType: ['placed']
     }
 ]
-
-const cardsData = JSON.stringify(cardsJson)
-localStorage.setItem('cardsJson', cardsData)
