@@ -1,52 +1,4 @@
-let cards = [
-    {
-        id: 1,
-        name: 'Boxer',
-        type: ['human fighter'],
-        cost: 1,
-        strength: 1,
-        defense: 1,
-        pic: 'boxer.png'
-    },
-    {
-        id: 2,
-        name: 'Dragon',
-        type: ['dragon'],
-        cost: 3,
-        strength: 3,
-        defense: 3,
-        pic: 'dragon.png'
-    },
-    {
-        id: 3,
-        name: 'DbCM',
-        type: ['machine', 'cute'],
-        cost: 2,
-        strength: 2,
-        defense: 1,
-        pic: 'DbCM.png'
-    },
-    {
-        id: 4,
-        name: 'Stone Giant',
-        type: ['stone', 'giant'],
-        cost: 3,
-        strength: 1,
-        defense: 3,
-        pic: 'stoneGiant.png'
-    },
-    {
-        id: 5,
-        name: 'Dragon Trainer',
-        type: ['human'],
-        cost: 2,
-        strength: 1,
-        defense: 2,
-        pic: 'dragonTrainer.png',
-        effectLabel: 'Fortalece 1 ponto de ataque e defesa de todos as cartas do tipo dragão',
-        effect: 'fortifyDragonsByOne'
-    }
-]
+let cards = JSON.parse(localStorage.getItem('cardsJson'))
 
 let tutorialFase = 0, geralMana = 2,
     cemetery = [], deck, opponentLife = 100,
@@ -66,7 +18,7 @@ document.querySelector('#pularTuto').addEventListener('click', () => {
             gameStart()
         }, 100);
     }, 300);
-})
+}, {once: true})
 
 function tutorial() {
     text = document.querySelector('.tutoText')
@@ -164,7 +116,7 @@ document.querySelector('#tutoOk').addEventListener('click', () => {
 })
 
 function gameStart() {
-    mana = 2
+    mana = 200
     manaind.innerText = mana
 
     window.addEventListener('click', () => {
@@ -225,39 +177,34 @@ function createCard() {
     strength.classList.add('cardStrength')
     defense.classList.add('cardDefense')
 
-    if (cardInfo.effectLabel) {
-        effectLabel.innerText = cardInfo.effectLabel
-        console.log(cardInfo.effect);
-        window[cardInfo.effect]()
-    } else {
-        effectLabel.innerText = ''
-    }
+    cardInfo.effectLabel
+        ? effectLabel.innerText = cardInfo.effectLabel
+        : effectLabel.innerText = ''
 
+name.innerText = cardInfo.name
+cost.innerText = cardInfo.cost
+strength.innerHTML = `<div style="background-image: url('./assets/img/atk.png')" class='card-icon'></div> <span id='strengthValue'>${cardInfo.strength}</span>`
+defense.innerHTML = `<div style="background-image: url('./assets/img/defense.png')" class='card-icon'></div> <span id='defenseValue'>${cardInfo.defense}</span>`
+pic.style.background = `center url(./assets/img/${cardInfo.pic}) no-repeat`
+pic.style.backgroundSize = 'cover'
 
-    name.innerText = cardInfo.name
-    cost.innerText = cardInfo.cost
-    strength.innerHTML = `<div style="background-image: url('./assets/img/atk.png')" class='card-icon'></div> <span id='strengthValue'>${cardInfo.strength}</span>`
-    defense.innerHTML = `<div style="background-image: url('./assets/img/defense.png')" class='card-icon'></div> <span id='defenseValue'>${cardInfo.defense}</span>`
-    pic.style.background = `center url(./assets/img/${cardInfo.pic}) no-repeat`
-    pic.style.backgroundSize = 'cover'
+card.appendChild(pic)
+card.appendChild(name)
+card.appendChild(cost)
+card.appendChild(attributes)
+card.appendChild(effectLabel)
+attributes.appendChild(strength)
+attributes.appendChild(defense)
 
-    card.appendChild(pic)
-    card.appendChild(name)
-    card.appendChild(cost)
-    card.appendChild(attributes)
-    card.appendChild(effectLabel)
-    attributes.appendChild(strength)
-    attributes.appendChild(defense)
+card.addEventListener('click', (card) => {
+    verifyManaCard(card, cardInfo.cost)
+})
 
-    card.addEventListener('click', (card) => {
-        verifyManaCard(card, cardInfo.cost)
-    })
-
-    if (turn == 'player') {
-        buyCard(card)
-    } else {
-        opponentBuyCard(card)
-    }
+if (turn == 'player') {
+    buyCard(card)
+} else {
+    opponentBuyCard(card)
+}
 }
 
 function verifyManaCard(card, cost) {
@@ -327,6 +274,14 @@ function playCard(card, cost) {
 
     slots.forEach(slot => {
         slot.addEventListener('click', (e) => {
+            if(cards[card.id].effectType){
+                cardInfo = cards[card.id]
+                if(cardInfo.effectType.includes('placed')){
+                    window[cardInfo.effect](slot)
+                }else{
+                    console.log('erro')
+                }
+            }
             placeCard(e.target)
         })
     })
