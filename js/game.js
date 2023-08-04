@@ -120,10 +120,6 @@ function gameStart() {
     mana = 200
     manaind.innerText = mana
 
-    window.addEventListener('click', () => {
-        manaind.innerText = mana
-    })
-
     document.querySelector('.coin').addEventListener('click', switchTurn)
 
     setTimeout(() => {
@@ -162,8 +158,7 @@ const clickHandler = (card) => {
         playCard(card.target.parentNode.parentNode)
     } else if (card.target.classList.contains('card-icon') || card.target.id == 'strengthValue' || card.target.id == 'defenseValue') {
         playCard(card.target.parentNode.parentNode.parentNode)
-    }
-    else {
+    } else {
         playCard(card.target.parentNode)
     }
 }
@@ -189,6 +184,7 @@ function createCard() {
     attributes.classList.add('cardAttributes')
     strength.classList.add('cardStrength')
     defense.classList.add('cardDefense')
+    card.setAttribute('cost', cardInfo.cost)
 
     cardInfo.effectLabel
         ? effectLabel.innerText = cardInfo.effectLabel
@@ -218,7 +214,7 @@ function createCard() {
     }
 }
 
-function verifyManaCard(card, cost) {
+function verifyManaCard(cost) {
     if (cost > mana) {
         manaind.style.background = '#931621'
         manaind.style.animation = 'shake 0.5s'
@@ -228,7 +224,6 @@ function verifyManaCard(card, cost) {
         }, 1200);
         return false
     } else {
-
         return true
     }
 }
@@ -263,8 +258,9 @@ function resetSlots() {
     })
 }
 
-function resetCard(card) {
-    card.replaceWith(card.cloneNode(true))
+function reduceMana(cost) {
+    mana = mana - cost
+    manaind.innerText = mana
 }
 
 function placeCard(target, card) {
@@ -274,18 +270,16 @@ function placeCard(target, card) {
         card.style.transform = ''
         handCards.style.transform = 'translateY(0)'
         placeCardAnimation(card)
+        resetSlots()
         card.removeEventListener('click', clickHandler)
+    } else {
+        console.log('erro')
     }
 }
 
-function reduceMana(cost) {
-    mana -= cost
-    manaind.innerText = mana
-}
-
 function playCard(card) {
-    let cost = Number(card.querySelector('.cardCost'))
-    if (verifyManaCard(card, cost)) {
+    let cost = Number(card.getAttribute('cost'))
+    if (verifyManaCard(cost)) {
         card.style.transform = 'translateY(-16rem)'
         handCards.style.transform = 'translateY(10rem)'
 
@@ -300,7 +294,7 @@ function playCard(card) {
                     }
                 }
                 placeCard(e.target, card)
-                reduceMana(card)
+                reduceMana(cost)
             })
         })
     }
