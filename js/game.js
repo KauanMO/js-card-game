@@ -16,7 +16,7 @@ document.querySelector('#pularTuto').addEventListener('click', () => {
             gameStart()
         }, 100);
     }, 300);
-}, {once: true})
+}, { once: true })
 
 function tutorial() {
     text = document.querySelector('.tutoText')
@@ -113,6 +113,9 @@ document.querySelector('#tutoOk').addEventListener('click', () => {
     tutorial()
 })
 
+let handCards = document.querySelector('.hand')
+let slots = document.querySelectorAll('.slot.player-slot')
+
 function gameStart() {
     mana = 200
     manaind.innerText = mana
@@ -129,7 +132,6 @@ function gameStart() {
 }
 
 function playerPlay() {
-    let hand = document.querySelector('.hand')
     if (turnCount < 1) {
         for (let i = 0; i < 5; i++) {
             createCard()
@@ -137,7 +139,7 @@ function playerPlay() {
     } else {
         createCard()
     }
-    hand.style.transform = 'translateY(0)'
+    handCards.style.transform = 'translateY(0)'
 }
 
 function opponentPlay() {
@@ -151,6 +153,19 @@ function opponentPlay() {
     setTimeout(() => {
         getOpponentPossibleCards()
     }, 1500);
+}
+
+const clickHandler = (card) => {
+    if (card.target.classList.contains('card')) {
+        playCard(card.target)
+    } else if (card.target.classList.contains('cardStrength') || card.target.classList.contains('cardDefense')) {
+        playCard(card.target.parentNode.parentNode)
+    } else if (card.target.classList.contains('card-icon') || card.target.id == 'strengthValue' || card.target.id == 'defenseValue') {
+        playCard(card.target.parentNode.parentNode.parentNode)
+    }
+    else {
+        playCard(card.target.parentNode)
+    }
 }
 
 function createCard() {
@@ -179,30 +194,28 @@ function createCard() {
         ? effectLabel.innerText = cardInfo.effectLabel
         : effectLabel.innerText = ''
 
-name.innerText = cardInfo.name
-cost.innerText = cardInfo.cost
-strength.innerHTML = `<div style="background-image: url('./assets/img/atk.png')" class='card-icon'></div> <span id='strengthValue'>${cardInfo.strength}</span>`
-defense.innerHTML = `<div style="background-image: url('./assets/img/defense.png')" class='card-icon'></div> <span id='defenseValue'>${cardInfo.defense}</span>`
-pic.style.background = `center url(./assets/img/${cardInfo.pic}) no-repeat`
-pic.style.backgroundSize = 'cover'
+    name.innerText = cardInfo.name
+    cost.innerText = cardInfo.cost
+    strength.innerHTML = `<div style="background-image: url('./assets/img/atk.png')" class='card-icon'></div> <span id='strengthValue'>${cardInfo.strength}</span>`
+    defense.innerHTML = `<div style="background-image: url('./assets/img/defense.png')" class='card-icon'></div> <span id='defenseValue'>${cardInfo.defense}</span>`
+    pic.style.background = `center url(./assets/img/${cardInfo.pic}) no-repeat`
+    pic.style.backgroundSize = 'cover'
 
-card.appendChild(pic)
-card.appendChild(name)
-card.appendChild(cost)
-card.appendChild(attributes)
-card.appendChild(effectLabel)
-attributes.appendChild(strength)
-attributes.appendChild(defense)
+    card.appendChild(pic)
+    card.appendChild(name)
+    card.appendChild(cost)
+    card.appendChild(attributes)
+    card.appendChild(effectLabel)
+    attributes.appendChild(strength)
+    attributes.appendChild(defense)
 
-card.addEventListener('click', (card) => {
-    verifyManaCard(card, cardInfo.cost)
-})
+    card.addEventListener('click', clickHandler)
 
-if (turn == 'player') {
-    buyCard(card)
-} else {
-    opponentBuyCard(card)
-}
+    if (turn == 'player') {
+        buyCard(card)
+    } else {
+        opponentBuyCard(card)
+    }
 }
 
 function verifyManaCard(card, cost) {
@@ -213,18 +226,10 @@ function verifyManaCard(card, cost) {
             manaind.style.background = 'var(--light-blue)'
             manaind.style.animation = 'none'
         }, 1200);
+        return false
     } else {
-        if (card.target.classList.contains('card')) {
-            playCard(card.target, cost)
-        } else if (card.target.classList.contains('cardStrength') || card.target.classList.contains('cardDefense')) {
-            playCard(card.target.parentNode.parentNode, cost)
 
-        } else if (card.target.classList.contains('card-icon') || card.target.id == 'strengthValue' || card.target.id == 'defenseValue') {
-            playCard(card.target.parentNode.parentNode.parentNode, cost)
-        }
-        else {
-            playCard(card.target.parentNode, cost)
-        }
+        return true
     }
 }
 
@@ -238,7 +243,7 @@ function buyCard(card) {
         })
     }
 
-    document.querySelector('.hand').appendChild(card)
+    handCards.appendChild(card)
 }
 
 function opponentBuyCard(card) {
@@ -252,41 +257,56 @@ function placeCardAnimation(card) {
     card.style.animation = 'placeCard .3s forwards'
 }
 
-function playCard(card, cost) {
-    let hand = document.querySelector('.hand')
-    card.style.transform = 'translateY(-16rem)'
-    hand.style.transform = 'translateY(10rem)'
-    let slots = document.querySelectorAll('.slot.player-slot')
-
-    function placeCard(target) {
-        target.appendChild(card)
-        card.classList = ['card']
-        card.style.transform = ''
-        mana -= cost
-        hand.style.transform = 'translateY(0)'
-        placeCardAnimation(card)
-        slots.forEach(slot => {
-            slot.replaceWith(slot.cloneNode(true))
-        })
-    }
-
+function resetSlots() {
     slots.forEach(slot => {
-        slot.addEventListener('click', (e) => {
-            if(cards[card.id].effectType){
-                cardInfo = cards[card.id]
-                if(cardInfo.effectType.includes('placed')){
-                    window[cardInfo.effect](slot)
-                }else{
-                    console.log('erro')
-                }
-            }
-            placeCard(e.target)
-        })
+        slot.replaceWith(slot.cloneNode(true))
     })
 }
 
+function resetCard(card) {
+    card.replaceWith(card.cloneNode(true))
+}
+
+function placeCard(target, card) {
+    if (target.classList.contains('player-slot') && target.innerHTML == '') {
+        target.appendChild(card)
+        card.classList = ['card']
+        card.style.transform = ''
+        handCards.style.transform = 'translateY(0)'
+        placeCardAnimation(card)
+        card.removeEventListener('click', clickHandler)
+    }
+}
+
+function reduceMana(cost) {
+    mana -= cost
+    manaind.innerText = mana
+}
+
+function playCard(card) {
+    let cost = Number(card.querySelector('.cardCost'))
+    if (verifyManaCard(card, cost)) {
+        card.style.transform = 'translateY(-16rem)'
+        handCards.style.transform = 'translateY(10rem)'
+
+        slots.forEach(slot => {
+            slot.addEventListener('click', (e) => {
+                if (cards[card.id].effectType) {
+                    cardInfo = cards[card.id]
+                    if (cardInfo.effectType.includes('placed')) {
+                        window[cardInfo.effect](slot)
+                    } else {
+                        console.log('erro')
+                    }
+                }
+                placeCard(e.target, card)
+                reduceMana(card)
+            })
+        })
+    }
+}
+
 function switchTurn() {
-    let hand = document.querySelector('.hand')
     let cards = document.querySelectorAll('.card')
     let coin = document.querySelector('.coin')
 
@@ -305,7 +325,7 @@ function switchTurn() {
         coin.style.background = "url('./assets/img/water-gif.gif')"
         playerPlay()
     } else {
-        hand.style.transform = 'translateY(20rem)'
+        handCards.style.transform = 'translateY(20rem)'
         opponentMana = geralMana
         coin.removeEventListener('click', switchTurn)
         coin.style.background = 'black'
