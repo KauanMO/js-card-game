@@ -2,7 +2,7 @@ let tutorialFase = 0, geralMana = 2,
     cemetery = [], deck, opponentLife = 100,
     playerLife = 100, firstTurn = true, turn = 'player',
     hand = [], mana, opponentMana, manaind = document.querySelector('.mana-indicator'),
-    opponentHand = [], turnCount = 0
+    opponentHand = [], turnCount = 0, pickCard
 
 document.querySelector('#pularTuto').addEventListener('click', () => {
     tutorialElement = document.querySelector('.tutorial')
@@ -152,6 +152,8 @@ function opponentPlay() {
 }
 
 const clickHandler = (card) => {
+    pickCard = card
+
     if (card.target.classList.contains('card')) {
         playCard(card.target)
     } else if (card.target.classList.contains('cardStrength') || card.target.classList.contains('cardDefense')) {
@@ -264,17 +266,44 @@ function reduceMana(cost) {
 }
 
 function placeCard(target, card) {
-    if (target.classList.contains('player-slot') && target.innerHTML == '') {
+    if (target.classList.contains('player-slot')) {
         target.appendChild(card)
         card.classList = ['card']
         card.style.transform = ''
         handCards.style.transform = 'translateY(0)'
         placeCardAnimation(card)
-        resetSlots()
+        removeSlotsClickListeners()
         card.removeEventListener('click', clickHandler)
     } else {
         console.log('erro')
     }
+}
+
+function addSlotsClickListeners() {
+    slots.forEach(slot => {
+        if (!(slot.firstChild)) {
+            slot.addEventListener('click', slotsEV)
+        }
+    })
+}
+
+function removeSlotsClickListeners() {
+    slots.forEach(slot => {
+        slot.removeEventListener('click', slotsEV)
+    })
+}
+
+function slotsEV(target) {
+    console.log(pickCard.target);
+    let cost = Number(pickCard.target.getAttribute('cost'))
+    // if (cards[pickCard.target.id].effectType) {
+    //     cardInfo = cards[pickCard.target.id]
+    //     if (cardInfo.effectType.includes('placed')) {
+    //         // window[cardInfo.effect](slot)
+    //     }
+    // }
+    placeCard(target.target, pickCard.target)
+    reduceMana(cost)
 }
 
 function playCard(card) {
@@ -283,20 +312,7 @@ function playCard(card) {
         card.style.transform = 'translateY(-16rem)'
         handCards.style.transform = 'translateY(10rem)'
 
-        slots.forEach(slot => {
-            slot.addEventListener('click', (e) => {
-                if (cards[card.id].effectType) {
-                    cardInfo = cards[card.id]
-                    if (cardInfo.effectType.includes('placed')) {
-                        window[cardInfo.effect](slot)
-                    } else {
-                        console.log('erro')
-                    }
-                }
-                placeCard(e.target, card)
-                reduceMana(cost)
-            })
-        })
+        addSlotsClickListeners()
     }
 }
 
