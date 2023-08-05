@@ -268,6 +268,7 @@ function reduceMana(cost) {
 
 function placeCard(target, card) {
     if (target.classList.contains('player-slot')) {
+        hand.splice(hand.indexOf(card), 1)
         target.appendChild(card)
         card.classList = ['card']
         card.style.transform = ''
