@@ -168,7 +168,8 @@ const clickHandler = (card) => {
 }
 
 function createCard() {
-    let cardInfo = cards[parseInt(Math.random() * cards.length)]
+    let cardId = parseInt(Math.random() * cards.length)
+    let cardInfo = cards[cardId]
     const card = document.createElement('div')
     const pic = document.createElement('div')
     const name = document.createElement('span')
@@ -179,7 +180,7 @@ function createCard() {
     const attributes = document.createElement('div')
 
     card.classList.add('inHandCard')
-    card.id = cardInfo.id
+    card.id = cards.indexOf(cards[cardId])
     card.style.animation = 'unset'
     pic.classList.add('cardPic')
     name.classList.add('cardName')
@@ -295,12 +296,12 @@ function removeSlotsClickListeners() {
 
 function slotsEV(target) {
     let cost = Number(pickCard.getAttribute('cost'))
-    // if (cards[pickCard.id].effectType) {
-    //     cardInfo = cards[pickCard.id]
-    //     if (cardInfo.effectType.includes('placed')) {
-    //         // window[cardInfo.effect](slot)
-    //     }
-    // }
+    if (cards[pickCard.id].effectType) {
+        cardInfo = cards[pickCard.id]
+        if (cardInfo.effectType.includes('placed')) {
+            window[cardInfo.effect](target.target)
+        }
+    }
     placeCard(target.target, pickCard)
     reduceMana(cost)
 }
