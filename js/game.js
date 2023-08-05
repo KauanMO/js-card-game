@@ -152,16 +152,18 @@ function opponentPlay() {
 }
 
 const clickHandler = (card) => {
-    pickCard = card
-
     if (card.target.classList.contains('card')) {
         playCard(card.target)
+        pickCard = card.target
     } else if (card.target.classList.contains('cardStrength') || card.target.classList.contains('cardDefense')) {
         playCard(card.target.parentNode.parentNode)
+        pickCard = card.target.parentNode.parentNode
     } else if (card.target.classList.contains('card-icon') || card.target.id == 'strengthValue' || card.target.id == 'defenseValue') {
         playCard(card.target.parentNode.parentNode.parentNode)
+        pickCard = card.target.parentNode.parentNode.parentNode
     } else {
         playCard(card.target.parentNode)
+        pickCard = card.target.parentNode
     }
 }
 
@@ -274,8 +276,6 @@ function placeCard(target, card) {
         placeCardAnimation(card)
         removeSlotsClickListeners()
         card.removeEventListener('click', clickHandler)
-    } else {
-        console.log('erro')
     }
 }
 
@@ -294,15 +294,14 @@ function removeSlotsClickListeners() {
 }
 
 function slotsEV(target) {
-    console.log(pickCard.target);
-    let cost = Number(pickCard.target.getAttribute('cost'))
-    // if (cards[pickCard.target.id].effectType) {
-    //     cardInfo = cards[pickCard.target.id]
+    let cost = Number(pickCard.getAttribute('cost'))
+    // if (cards[pickCard.id].effectType) {
+    //     cardInfo = cards[pickCard.id]
     //     if (cardInfo.effectType.includes('placed')) {
     //         // window[cardInfo.effect](slot)
     //     }
     // }
-    placeCard(target.target, pickCard.target)
+    placeCard(target.target, pickCard)
     reduceMana(cost)
 }
 
