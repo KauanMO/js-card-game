@@ -209,9 +209,8 @@ function createCard() {
     attributes.appendChild(strength)
     attributes.appendChild(defense)
 
-    card.addEventListener('click', clickHandler)
-
     if (turn == 'player') {
+        card.addEventListener('click', clickHandler)
         buyCard(card)
     } else {
         opponentBuyCard(card)
