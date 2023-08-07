@@ -40,6 +40,6 @@ const cards = [
         pic: 'dragonTrainer.png',
         effectLabel: 'Fortalece 1 ponto de ataque e defesa de todos as cartas do tipo dragão adjacentes',
         effect: 'fortifySideDragonsByOne',
-        effectType: ['placed']
+        effectType: ['onField', 'placed']
     }
 ]

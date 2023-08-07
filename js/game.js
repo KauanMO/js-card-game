@@ -277,6 +277,7 @@ function placeCard(target, card) {
         placeCardAnimation(card)
         removeSlotsClickListeners()
         card.removeEventListener('click', clickHandler)
+        window['verifyFieldEffects']()
     }
 }
 

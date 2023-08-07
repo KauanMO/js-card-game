@@ -14,12 +14,12 @@
         }
 
         function verifyFieldEffects() {
-            document.querySelectorAll('.player-slot').forEach(slot=>{
-                if(slot.firstChild){
-                    let effect = cards[slot.firstChild.id].effect ?? null
-                    
-                    if(effect){
-                        console.log(effect)
+            document.querySelectorAll('.player-slot').forEach(slot => {
+                if (slot.firstChild) {
+                    let effectType = cards[slot.firstChild.id].effectType
+                    if (effectType && effectType.includes('onField')) {
+                        console.log(effectType)
+                        window[cards[slot.firstChild.id].effect](slot)
                     }
                 }
             })
@@ -30,13 +30,15 @@
             let leftSlot = document.querySelector(`.player-slot#slot-${slotId - 1}`)
             let rightSlot = document.querySelector(`.player-slot#slot-${slotId + 1}`)
 
-            if (leftSlot && leftSlot.firstChild && verifyDragon(leftSlot.firstChild)) {
+            if (leftSlot && leftSlot.firstChild && verifyDragon(leftSlot.firstChild) && !(leftSlot.firstChild.classList.contains('fbDragonTrainer'))) {
                 fortifyAttribute(leftSlot.firstChild, 'strength', 1)
                 fortifyAttribute(leftSlot.firstChild, 'defense', 1)
+                leftSlot.firstChild.classList.add('fbDragonTrainer')
             }
-            if (rightSlot && rightSlot.firstChild && verifyDragon(rightSlot.firstChild)) {
+            if (rightSlot && rightSlot.firstChild && verifyDragon(rightSlot.firstChild) && !(rightSlot.firstChild.classList.contains('fbDragonTrainer'))) {
                 fortifyAttribute(rightSlot.firstChild, 'strength', 1)
                 fortifyAttribute(rightSlot.firstChild, 'defense', 1)
+                rightSlot.firstChild.classList.add('fbDragonTrainer')
             }
         }
 
