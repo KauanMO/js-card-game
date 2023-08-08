@@ -191,6 +191,10 @@ function createCard() {
     defense.classList.add('cardDefense')
     card.setAttribute('cost', cardInfo.cost)
 
+    if(!(card.classList.contains('card'))){
+        card.classList.add('card')
+    }
+
     cardInfo.effectLabel
         ? effectLabel.innerText = cardInfo.effectLabel
         : effectLabel.innerText = ''

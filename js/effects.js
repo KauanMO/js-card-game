@@ -17,9 +17,10 @@
             document.querySelectorAll('.player-slot').forEach(slot => {
                 if (slot.firstChild) {
                     let effectType = cards[slot.firstChild.id].effectType
-                    if (effectType && effectType.includes('onField')) {
-                        console.log(effectType)
-                        window[cards[slot.firstChild.id].effect](slot)
+                    if (effectType) {
+                        if(effectType.includes('onField')){
+                            window[cards[slot.firstChild.id].effect](slot)
+                        }
                     }
                 }
             })
