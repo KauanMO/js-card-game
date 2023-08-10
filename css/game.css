@@ -25,6 +25,12 @@
     }
 }
 
+@keyframes attributeWeak {
+    50%{
+        font-size: .6rem;
+    }
+} 
+
 @keyframes appear {
     from {
         opacity: 0;

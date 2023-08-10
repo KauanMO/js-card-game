@@ -275,7 +275,7 @@ function placeCard(target, card) {
     if (target.classList.contains('player-slot')) {
         hand.splice(hand.indexOf(card), 1)
         target.appendChild(card)
-        card.classList = ['card']
+        card.classList = ['card alive']
         card.style.transform = ''
         handCards.style.transform = 'translateY(0)'
         placeCardAnimation(card)
@@ -432,8 +432,13 @@ function killAnimate(card) {
 }
 
 function killCard(card) {
+    let cardInfo = cards[card.id]
+    card.classList = ['card dead']
     cemetery.push(card)
     killAnimate(card)
+    if(cardInfo.effectType.includes('onField')){
+        window[cardInfo.effect](slot)
+    }
     setTimeout(() => {
         card.parentNode.innerHTML = ''
     }, 400);
