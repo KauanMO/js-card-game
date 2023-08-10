@@ -11,6 +11,7 @@
 
         function weakAttribute(card, attribute, value) {
             let cardAttribute = card.querySelector(`#${attribute}Value`).innerText
+            console.log(cardAttribute);
             if (cardAttribute == 'defense' && Number(cardAttribute) > 1) {
                 cardAttribute = Number(card.querySelector(`#${attribute}Value`).innerText) - value
                 weakAnimate(card.querySelector(`#${attribute}Value`))
@@ -38,14 +39,18 @@
             })
         }
 
-        function fortifySideDragonsByOne(slot) {
+        function fortifySideDragonsByOne(slot, killed) {
             let slotId = Number(slot.id.slice(5))
             let leftSlot = document.querySelector(`.player-slot#slot-${slotId - 1}`)
             let rightSlot = document.querySelector(`.player-slot#slot-${slotId + 1}`)
 
-            if (slot.firstChild && slot.firstChild.classList.contains('dead')) {
-                weakAttribute(leftSlot.firstChild, 'strength', 1)
-                weakAttribute(leftSlot.firstChild, 'defense', 1)
+            if (killed) {
+                if(leftSlot.classList.contains('fbDragonTrainer')){
+                    weakAttribute(leftSlot.firstChild, 'strength', 1)
+                }
+                if(rightSlot.classList.contains('fbDragonTrainer')){
+                    weakAttribute(rightSlot.firstChild, 'defense', 1)
+                }
             } else {
                 if (leftSlot && leftSlot.firstChild && verifyDragon(leftSlot.firstChild) && !(leftSlot.firstChild.classList.contains('fbDragonTrainer'))) {
                     fortifyAttribute(leftSlot.firstChild, 'strength', 1)

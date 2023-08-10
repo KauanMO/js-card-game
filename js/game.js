@@ -436,8 +436,8 @@ function killCard(card) {
     card.classList = ['card dead']
     cemetery.push(card)
     killAnimate(card)
-    if(cardInfo.effectType.includes('onField')){
-        window[cardInfo.effect](slot)
+    if(cardInfo.effectType && cardInfo.effectType.includes('onField')){
+        window[cardInfo.effect](card.parentNode, true)
     }
     setTimeout(() => {
         card.parentNode.innerHTML = ''
